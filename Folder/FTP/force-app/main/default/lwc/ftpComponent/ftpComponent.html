@@ -1,0 +1,53 @@
+<template>
+
+    <lightning-card title="CSV TO Account" icon-name="doctype:csv">
+        <div class="slds-p-around_medium">
+            <strong>Your file:</strong>{csvFileName}<br/><br/>
+            <lightning-input type="file" label="Please Upload a UTF-8 ecoded, commna separated .csv file"
+            accept=".csv" onchange={handleFileUpload}>
+            </lightning-input>
+        </div>
+
+        <div>
+            <lightning-input label="Enter File Name" data-id="File-input"
+            class="slds-m-around_medium"></lightning-input>
+            <lightning-button label="FTP Upload" onclick={handleButtonClick}
+                class="slds-m-left_x-small slds-m-around_medium">
+            </lightning-button>
+        </div>
+
+        <!--If error occurs while FTP file and handle this in JS pending-->
+        <template if:true={errorFromFTP}>
+            <div class="slds-m-around_medium slds-text-color_error
+                slds-align_absolute-center">EFF:{errorFromFTP}
+            </div>
+        </template>
+
+        <!-- error when no file name found  & handle in js pending-->
+        <template if:true={errorNoFileName}>
+            <div class="slds-m-around_medium slds-text-color_error
+                slds-align_absolute-center">EFN:{errorNoFileName}
+            </div>
+        </template>
+
+        <!-- to show the data in table if file contains data & handling in js pending-->
+        <template lwc:if={isTableVisible}>
+            <div style="height: 300px;">
+                <lightning-datatable key-field="id" data={data} columns={columns}
+                    hide-checkbox-column
+                    show-row-number-column="true"></lightning-datatable>
+            </div>
+
+        <div>
+            <lightning-button label="Confirm Upload" onclick={handleUpload}
+                class="slds-m-left_x-small"></lightning-button>
+        </div>
+        </template>
+        
+        <!-- handling in the js pending -->
+        <template if:true={message}>
+            <p class="slds-text-color_success slds-align_absolute-center">{message}</p>
+        </template>
+        
+    </lightning-card> 
+</template>
