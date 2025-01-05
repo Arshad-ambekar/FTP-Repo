@@ -1,0 +1,55 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Demo HIC Swagger File
+host: "hicdemo-dev-ed.my.salesforce-sites.com"  # During dev, should point to your Salesforce instance
+basePath: /services/apexrest  # Base path for Salesforce REST API
+tags:
+  - name: "Orders"
+    description: "Information about Orders"
+
+schemes:
+  - https
+  - http
+
+consumes:
+  - application/json
+produces:
+  - application/json
+
+paths:
+  /getorders/{id}:  # Endpoint that fetches details of a specific order by 'id'
+    get:
+      tags:
+        - "Orders"
+      description: "Returns the details of an Order by Id."
+      parameters:
+        - name: id
+          in: path
+          required: true
+          type: string
+          description: "The unique Salesforce Id of the Order record."
+      responses:
+        "200":
+          description: "Successfully retrieved the Order details."
+          schema:
+            type: object
+            properties:
+              Id:
+                type: string
+                example: "801xx0000001ABZAA2"  # Example Salesforce Order Id
+              OrderNumber:
+                type: string
+                example: "00001234"  # Example Order Number
+              Status:
+                type: string
+                example: "Ordered"  # Example Status
+              TotalAmount:
+                type: number
+                example: 2500.00  # Example Total Amount
+        "400":
+          description: "Bad request. The provided 'id' is missing or invalid."
+        "404":
+          description: "Order not found. Ensure the 'id' exists in Salesforce."
+        "500":
+          description: "Internal Server Error. Something went wrong on the server."

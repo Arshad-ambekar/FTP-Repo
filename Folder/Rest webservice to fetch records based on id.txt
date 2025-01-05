@@ -1,0 +1,41 @@
+@RestResource(urlMapping='/getorders/*')
+global class DemoApiCalls {
+    @HttpGet
+    global static void getRecord() {
+        RestRequest req = RestContext.request;
+        RestResponse res = RestContext.response;
+        res.addHeader('Content-Type', 'application/json');
+
+        // Extracting ID from the request URI
+        String orderId = req.requestURI.substring(req.requestURI.lastIndexOf('/') + 1);
+
+        try {
+            if (String.isNotBlank(orderId) && orderId != 'getorders') {
+                // Fetch specific Order by ID
+                Order odr = [
+                    SELECT Id, OrderNumber, CreatedDate, Account.Name, Contract.ContractNumber
+                    FROM Order
+                    WHERE Id = :orderId
+                    LIMIT 1
+                ];
+                res.responseBody = Blob.valueOf(JSON.serialize(odr));
+                res.statusCode = 200;
+            } else {
+                // Fetch all orders
+                List<Order> odrList = [
+                    SELECT Id, OrderNumber, CreatedDate, Account.Name, Contract.ContractNumber
+                    FROM Order
+                    ORDER BY CreatedDate DESC
+                    LIMIT 10
+                ];
+                res.responseBody = Blob.valueOf(JSON.serialize(odrList));
+                res.statusCode = 200;
+            }
+        } catch (Exception e) {
+            res.statusCode = 400;
+            res.responseBody = Blob.valueOf(JSON.serialize(new Map<String, Object>{
+                'message' => 'Error: ' + e.getMessage()
+            }));
+        }
+    }
+}
